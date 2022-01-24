@@ -1,25 +1,33 @@
 module test_fsm ();
-	//wire reset,clk,in_seq,out_seq;
-	
-	//output reset, clk, in_seq;
+
 	reg reset, clk, in_seq;
-	reg out_seq;
-	reg [15:0] data;
+	wire out_seq;
+	reg [31:0] data;
 	integer i;
 	
-	// The input data sequence is defined in the bit
-	// vector "data". On each clock one bit of data is
-	// sent to the state machine which will detect the
-	// sequence "101" in this data
+	reg out;
 	
-	initial // Initialization
+	
+	initial 
 	begin
-		data = 16'b0010100110101011;
+		$dumpfile("test_bench.vcd");
+		$dumpvars(0,test_fsm);
+		//data = 32'b0;
 		i = 0;
-		reset = 1'b0; // reset the state machine
-		#1200;
-		reset = 1'b1;
-		#20000;
+		reset = 1'b0; // reset 
+		in_seq = 0;
+		# 20 reset = 1'b1;
+		# 03 in_seq = 1'b1;
+		# 20 in_seq = 1'b0;
+		# 17 in_seq = 1'b1;
+		# 20 in_seq = 1'b0;
+		# 20 in_seq = 1'b1;
+		# 15 in_seq = 1'b0;
+		# 50 in_seq = 1'b1;
+		# 15 in_seq = 1'b0;
+		# 20 in_seq = 1'b1;
+		# 20 in_seq = 1'b0;
+		# 30;
 		$finish;
 	end
 	
@@ -27,20 +35,13 @@ module test_fsm ();
 		begin
 			clk = 0;
 			forever begin
-					#600;
-					clk = ~clk;
+				#10;
+				clk = ~clk;
 			end
 		end
-		// Right shifting of data to
-		// generate the input sequence
+	
+	SequenceDetector101 fsm0 (clk, reset, in_seq, out_seq);
+		
 
-		always @ (posedge clk)
-		begin
-			#50;
-			in_seq = data >> i;
-			i = i+1;
-		end
 		
-		SequenceDetector101 fsm0 (clk, reset, in_seq, out_seq);
-		
-	endmodule
+endmodule
