@@ -4,7 +4,9 @@ module SequenceDetector101 (
     input x,
     output z ); 
 
-	reg in_seq_reg;
+	wire in_seq_reg;
+	reg out_seq;
+	
     
     parameter SIZE = 2;
 	parameter S0 = 2'b00, S1 = 2'b01, S2 = 2'b10;
@@ -14,41 +16,42 @@ module SequenceDetector101 (
 	reg [SIZE-1:0] next_state; // Combinational part of the FSM
 
     assign in_seq_reg = x;
+	 assign z = out_seq;
     
     always @ (*)
 	begin : FSM_COMBO
 		next_state = 2'b00;
         if (aresetn == 1'b0)
-			z <= 1'b0;
+			out_seq <= 1'b0;
 		else begin
 			case(state)
 			S0 : 	if (in_seq_reg == 1'b0) begin
 					next_state = S0;
-					z <= 1'b0;
+					out_seq <= 1'b0;
 					end
 					else begin
 					next_state = S1;
-					z <= 1'b0;
+					out_seq <= 1'b0;
                 	end
             S1 : 	if (in_seq_reg == 1'b0) begin
 					next_state = S2;
-					z <= 1'b0;
+					out_seq <= 1'b0;
 					end
 					else begin
 					next_state = S1;
-					z <= 1'b0;
+					out_seq <= 1'b0;
 					end
 			S2 : 	if (in_seq_reg == 1'b0) begin
 					next_state = S0;
-					z <= 1'b0;
+					out_seq <= 1'b0;
 					end
 					else begin
 					next_state = S1;
-					z <= 1'b1;
+					out_seq <= 1'b1;
 					end
 			default : begin
 					next_state = S0;
-					z <= 1'b0;
+					out_seq <= 1'b0;
 					end
 			endcase
         end
